@@ -36,7 +36,7 @@ Ask in natural language. The plugin provides the team protocol, 14 coordination 
 
 ## Releases
 
-[v0.1.26](./release-notes/v0.1.26.md) refreshes the team workspace with completion and inbox cards, preserves the distinct claimed state, and fixes optional tool inputs and live host session-format detection. This stable plugin release uses npm `latest`; the recommended Harness host remains `0.2.1-rc.2`. See the exact [support matrix](./compatibility.json) and [verification scope](./docs/maintenance-workflow.md).
+[v0.1.27](./release-notes/v0.1.27.md) adapts the plugin to the DeepSeek Harness `0.2.1-rc.3` cohort: the recommended host target is now `0.2.1-rc.3`, all 21 host peer ranges enumerate it, and the development cohort plus every pnpm override resolve to `0.2.1-rc.3`. The functional surface is unchanged from the previous release. This is a fork build — it ships the verified `lib/` outputs from this repository and is installed from that checkout rather than from npm `latest`. See the exact [support matrix](./compatibility.json), the [`0.2.1-rc.3` migration evidence](./docs/harness-0.2.1-rc.3/README.md) and [verification scope](./docs/maintenance-workflow.md).
 
 ## Why AgentTeams?
 
@@ -55,16 +55,16 @@ The conversation card and activity panel use Harness's official locale service. 
 
 ## Install and choose versions
 
-**Recommended pair: DeepSeek Harness `0.2.1-rc.2` + AgentTeams `0.1.26`. The host remains an RC.**
+**Recommended pair: DeepSeek Harness `0.2.1-rc.3` + AgentTeams `0.1.27`. The host remains an RC.**
 
 | Use case | DeepSeek Harness | AgentTeams plugin |
 | --- | --- | --- |
-| **Recommended** | **`0.2.1-rc.2`** | **`0.1.26`** |
-| Previous recommended RC | `0.2.1-rc.1`, `0.2.0-rc.2`, `0.1.7-rc.2` | `0.1.26` |
-| Legacy RC | `0.1.5-rc.1`, `0.1.5-rc.2`, `0.1.5-rc.3` | `0.1.26` |
-| Retaining an older RC | `0.1.2-rc.1` | `0.1.26` |
-| Developer Alpha testing | `0.1.2-alpha.5` | `0.1.26` |
-| Retaining an older Alpha | `0.1.2-alpha.2` | `0.1.26` |
+| **Recommended** | **`0.2.1-rc.3`** | **`0.1.27`** |
+| Previous recommended RC | `0.2.1-rc.2`, `0.2.1-rc.1`, `0.2.0-rc.2`, `0.1.7-rc.2` | `0.1.27` |
+| Legacy RC | `0.1.5-rc.1`, `0.1.5-rc.2`, `0.1.5-rc.3` | `0.1.27` |
+| Retaining an older RC | `0.1.2-rc.1` | `0.1.27` |
+| Developer Alpha testing | `0.1.2-alpha.5` | `0.1.27` |
+| Retaining an older Alpha | `0.1.2-alpha.2` | `0.1.27` |
 
 ### Desktop app
 
@@ -74,14 +74,25 @@ In the app sidebar, open **Plugins → Add plugin** and enter the npm package sp
 @nanmicoder/dsh-agent-teams
 ```
 
-The package name resolves npm `latest`. To pin a version, append `@0.1.26`. Install it, then choose **Enable now**. If the host asks for a restart, restart the desktop app. Use the package spec above for the published build; an npm or GitHub webpage URL is not the same install source. For Git installation, use a commit containing the verified build outputs described below.
+The package name resolves npm `latest` for the upstream release. To pin a version, append `@0.1.27`. Install it, then choose **Enable now**. If the host asks for a restart, restart the desktop app. An npm or GitHub webpage URL is not the same install source. The fork build below is not published to npm, so install it from its checkout path instead.
 
-The desktop app supplies its own Harness core and package manager. Upgrading the global CLI does not upgrade that core, and an ordinary standalone CLI cannot manage its desktop profile. The CLI carrier installed by the desktop app can manage that profile in `0.2.1-rc.2`. Check the embedded core against the compatibility list. Harness `0.2.1-rc.2` is now the exact published target; its RC status is unchanged. The earlier source-only `0.2.0` prediction is no longer a support declaration. See the [release migration evidence](./docs/harness-0.2.1-rc.2/README.md).
+The desktop app supplies its own Harness core and package manager. Upgrading the global CLI does not upgrade that core, and an ordinary standalone CLI cannot manage its desktop profile. The CLI carrier installed by the desktop app can manage that profile in `0.2.1-rc.3`. Check the embedded core against the compatibility list. Harness `0.2.1-rc.3` is now the exact published target; its RC status is unchanged. The earlier source-only `0.2.0` prediction is no longer a support declaration. See the [release migration evidence](./docs/harness-0.2.1-rc.3/README.md).
+
+### This fork build
+
+This repository is adapted for the `0.2.1-rc.3` desktop core. Install the checkout itself, not the npm package:
+
+```sh
+# from the parent directory of the checkout, or pass an absolute path
+dsh plugin --profile desktop add --save-exact <path-to-this-checkout>
+```
+
+The desktop app's **Plugins → Add plugin** accepts the same directory path. The profile resolves `lib/` from the checkout, so build first (`pnpm install && pnpm build`) or use a commit that contains the committed build outputs, as the [maintenance guide](./docs/maintenance-workflow.md) describes. On the machine this adaptation was verified on, the checkout lives at `E:\agent-teams`.
 
 ### CLI / Web: 1. Install DeepSeek Harness
 
 ```sh
-npm install --global @deepseek-ai/dsh@0.2.1-rc.2
+npm install --global @deepseek-ai/dsh@0.2.1-rc.3
 dsh --version
 ```
 
@@ -89,7 +100,7 @@ Skip this if you already run this version. Alpha is opt-in: select an exact Alph
 
 ### CLI / Web: 2. Install the AgentTeams plugin
 
-Install or upgrade from npm using the package name (resolves npm `latest`, currently `0.1.26`):
+Install or upgrade from npm using the package name (resolves npm `latest`, currently `0.1.27`):
 
 ```sh
 dsh plugin --profile web add --save-exact @nanmicoder/dsh-agent-teams

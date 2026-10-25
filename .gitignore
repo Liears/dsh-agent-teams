@@ -5,3 +5,6 @@ node_modules/
 
 # Local immutable candidate used by the Harness compatibility lab.
 /artifacts/harness-0.2.1-rc.1/
+
+# Local packaging artifacts
+*.tgz

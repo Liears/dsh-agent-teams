@@ -1,9 +1,21 @@
 /** Shared built-product scenarios for registry releases and explicitly identified source checkouts. */
-import { mkdirSync, writeFileSync, readFileSync, existsSync, copyFileSync, symlinkSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, existsSync, copyFileSync, symlinkSync, unlinkSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const json = (path, value) => writeFileSync(path, JSON.stringify(value, null, 2) + '\n');
+
+/**
+ * Windows refuses `symlinkSync(..., 'dir')` without Developer Mode or an elevated
+ * token. A directory junction links the same paths with no privilege, so the
+ * fixture profile can point at the prepared runtime on every supported host.
+ * A leftover link is removed first, so repeated runs over the same report
+ * directory do not fail with EEXIST.
+ */
+const linkDirectory = (target, path) => {
+    try { unlinkSync(path); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+    symlinkSync(target, path, process.platform === 'win32' ? 'junction' : 'dir');
+};
 
 export const runtimeScenarios = ['lifecycle', 'fallback', 'failure', 'captain-idle-wakeup', 'progressive-entry', 'web-approval', 'protocol-compatibility', 'stability'];
 
@@ -15,8 +27,8 @@ for (const scenario of selectedScenarios) {
     mkdirSync(profile, { recursive: true });
     mkdirSync(workspace, { recursive: true });
     mkdirSync(join(profile, 'node_modules/@nanmicoder'), { recursive: true });
-    if (linkWorkspacePackages) symlinkSync(join(runtime, 'node_modules/@deepseek-ai'), join(profile, 'node_modules/@deepseek-ai'), 'dir');
-    symlinkSync(join(runtime, 'node_modules/@nanmicoder/dsh-agent-teams'), join(profile, 'node_modules/@nanmicoder/dsh-agent-teams'), 'dir');
+    if (linkWorkspacePackages) linkDirectory(join(runtime, 'node_modules/@deepseek-ai'), join(profile, 'node_modules/@deepseek-ai'));
+    linkDirectory(join(runtime, 'node_modules/@nanmicoder/dsh-agent-teams'), join(profile, 'node_modules/@nanmicoder/dsh-agent-teams'));
     json(join(profile, 'package.json'), { name: 'runtime-test-profile', version: '0.0.0', private: true, type: 'module', dsh: { profile: { bundles: ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-headless', '@nanmicoder/dsh-agent-teams'], patchReload: 'startup' } } });
     copyFileSync(join(dirname(fileURLToPath(import.meta.url)), 'fixtures/harness-runtime-llm.mjs'), join(profile, 'fixture-llm.mjs'));
     writeFileSync(join(profile, 'cordis.patch.yml'), `- id: llm-deepseek\n  disabled: true\n- id: llm-pi-ai\n  disabled: true\n- id: agent-default-model\n  config:\n    provider: runtime-lab\n    model: fixture-model\n- insert:\n    - id: runtime-lab-fixture\n      name: './fixture-llm.mjs'\n`);
