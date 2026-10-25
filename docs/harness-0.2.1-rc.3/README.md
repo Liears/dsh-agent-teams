@@ -10,7 +10,7 @@ Upstream `0.1.26` enumerates host targets up to `0.2.1-rc.2`. The `0.2.1-rc.3` c
 | `compatibility.json` | `0.2.1-rc.3` added as `recommended`; `0.2.1-rc.2` demoted to `legacy`; `recommendedHost` moved to rc.3. |
 | `package.json` peers | `0.2.1-rc.3` prepended to all 21 DSH ranges; every previously declared target is retained. |
 | `package.json` dev cohort | `@deepseek-ai/dsh` and 24 DSH packages pinned to `0.2.1-rc.3`. |
-| `pnpm-workspace.yaml` | 306 overrides pinned to `0.2.1-rc.3`, so one exact cohort resolves instead of a mix. |
+| `pnpm-workspace.yaml` | 305 overrides pinned to `0.2.1-rc.3`, so one exact cohort resolves instead of a mix. |
 | Product source | Unchanged: `src/` is byte-identical to `0.1.26`; `lib/` is rebuilt from it. |
 | Verification tooling | Windows lane fixes only (see below). |
 
